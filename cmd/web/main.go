@@ -2,19 +2,35 @@ package main
 
 import (
 	"fmt"
+	"github.com/alexedwards/scs/v2"
 	"github.com/yaji1122/go-simple-web/pkg/config"
 	"github.com/yaji1122/go-simple-web/pkg/handler"
 	"github.com/yaji1122/go-simple-web/pkg/render"
 	"log"
 	"net/http"
+	"time"
 )
 
 const port = ":8080"
 
+//宣告一個系統設定 AppConfig for same pkg use
+var appConfig config.AppConfig
+var session *scs.SessionManager
+
 func main() {
-	//使用同一個 AppConfig
-	var appConfig config.AppConfig
+	//change to true when in production
+	appConfig.InProduction = false
+
+	//初始化session
+	log.Println("初始化Session Manager")
+	session = scs.New()
+	session.Lifetime = 30 * time.Minute
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = false //localhost use http, in product will be true
+	appConfig.Session = session
 	//產生 Template Cache
+	log.Println("產生Template Cache")
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Fatal("Error Creating Template Cache")
@@ -33,7 +49,7 @@ func main() {
 	//http.HandleFunc("/", handler.Repo.Home)
 	//http.HandleFunc("/about", handler.Repo.About)
 
-	fmt.Println(fmt.Sprintf("Starting application on port 8080 http://localhost:8080"))
+	log.Println(fmt.Sprintf("Starting application on port 8080 http://localhost:8080"))
 	//_ = http.ListenAndServe(port, nil)
 
 	srv := &http.Server{

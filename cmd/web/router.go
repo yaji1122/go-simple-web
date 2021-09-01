@@ -14,6 +14,9 @@ func routes(app *config.AppConfig) http.Handler {
 	//mux.Get("/about", http.HandlerFunc(handler.Repo.About))
 	router := chi.NewRouter()
 	router.Use(middleware.Recoverer)
+	router.Use(WriteToConsole)
+	router.Use(NoSurf)
+	router.Use(SessionLoad)
 	router.Get("/", handler.Repo.Home)
 	router.Get("/about", handler.Repo.About)
 	return router

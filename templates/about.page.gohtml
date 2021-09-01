@@ -8,6 +8,13 @@
                 <hr>
                 <p>This message came from the template data :</p>
                 <p>{{index .StringMap "test"}}</p>
+                <p>
+                    {{if ne (index .StringMap "remoteIP") ""}}
+                        Your IP Address is: {{index .StringMap "remoteIP"}}
+                    {{else}}
+                        I don't know your ip address yet, visit the <a href="/">HOME</a>
+                    {{end}}
+                </p>
                 <hr>
                 <a href="/">Back To Home</a>
             </div>
